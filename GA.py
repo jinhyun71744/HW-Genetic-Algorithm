@@ -95,7 +95,7 @@ class Population:
     #########
     def uniform_crossover(self,prob,gene_prob=0.5):
         """ TODO: 필수 구현 """
-        print("박진현: 242122") # 학생 수행 확인용입니다. 
+        # print("박진현: 242122") # 학생 수행 확인용입니다. 
         
         # 개체의 인덱스를 무작위 선택하기 위한 작업, crossover와 동일한 로직
         number = len(self._pop)

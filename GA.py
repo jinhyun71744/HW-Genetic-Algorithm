@@ -95,8 +95,29 @@ class Population:
     #########
     def uniform_crossover(self,prob,gene_prob=0.5):
         """ TODO: 필수 구현 """
-        print("이름: 학번") # 학생 수행 확인용입니다. 
-        pass
+        print("박진현: 242122") # 학생 수행 확인용입니다. 
+        
+        # 개체의 인덱스를 무작위 선택하기 위한 작업, crossover와 동일한 로직
+        number = len(self._pop)
+        idx = rng.permutation(number)
+        halfnumber = number // 2
+
+        for i in range(halfnumber):
+            # 무모 개체 선택
+            a = self._pop[idx[i]]
+            b = self._pop[idx[halfnumber + i]]
+            length = len(a)
+            
+            # 개체의 crossover 실행 여부
+            if true(prob):
+                for g in range(length):
+                    
+                    # 유전자의 crossover 실행 여부
+                    if true(gene_prob):
+                        # 부모의 유전자 교환
+                        a[g], b[g] = b[g], a[g]
+        return self
+
     #########
     def mutation(self, prob):
         """Mutation"""
@@ -213,7 +234,7 @@ class KnapsackProblem:
             if gen % 10 == 0:
                 print(f"RWS Generation {gen:3d}: Max Fitness = {current_max:.6f}")
                 
-            generation.selection("RWS").crossover(self.Pc).mutation(self.Pm)
+            generation.selection("RWS").uniform_crossover(self.Pc).mutation(self.Pm)
 
         self.log = {"avg": fitavg, "max": fitmax, "pop": generation.pop}
         return generation.pop
@@ -238,7 +259,7 @@ class KnapsackProblem:
             if gen % 10 == 0:
                 print(f"TMS Generation {gen:3d}: Max Fitness = {current_max:.6f}")
                 
-            generation.selection("TMS").crossover(self.Pc).mutation(self.Pm)
+            generation.selection("TMS").uniform_crossover(self.Pc).mutation(self.Pm)
 
         self.log = {"avg": fitavg, "max": fitmax, "pop": generation.pop}
         return generation.pop

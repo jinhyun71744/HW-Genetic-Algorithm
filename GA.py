@@ -43,16 +43,25 @@ class Population:
         else:
             raise ValueError
 
-    def selection_TMS(self):
+    def selection_TMS(self, k=3): # 매개변수 k 추가
         """TournamentSelection"""
         assert(self._fitness is not None)
         number = len(self._pop)
 
         pop = []
         for i in range(number):
-            x = rng.integers(number)
-            individual = self._pop[i] if self._fitness[i] > self._fitness[x] else self._pop[x]
-            pop.append(individual.copy())
+            # 기존: 개체 i와 무작위 개체 1명을 비교하여 더 우수한 1명 선택
+            # 변경: k명 후보를 무작위로 뽑아 그 중 최고 fitness 1명을 선택 (토너먼트 규모 확장)
+            candidates = rng.integers(0, number, size=k)
+            best_idx = None
+            best_fit = -1
+
+            for c in candidates: 
+                if self._fitness[c] > best_fit:
+                    best_fit = self._fitness[c]
+                    best_idx = c
+
+            pop.append(self._pop[best_idx].copy())
 
         self._pop = pop
         self._fitness = None
@@ -153,7 +162,7 @@ class KnapsackProblem:
     """Define a Knapsack Problem and Solve."""
 
     def __init__(self, filename=None):
-        self.pop_size = 200
+        self.pop_size = 100
         self.max_generations = 100
         self.Pc = 0.9
         self.Pm = 0.01
@@ -233,8 +242,13 @@ class KnapsackProblem:
             # 10 세대마다 fitness 출력
             if gen % 10 == 0:
                 print(f"RWS Generation {gen:3d}: Max Fitness = {current_max:.6f}")
+
+            # 기존: 고정된 Pm을 사용
+            # 변경: 세대가 진행될수록 돌연변이 확률을 감소시키는 방식 도입
+            Pm_t = self.Pm * (1 - gen / self.max_generations)
+            Pm_t = max(Pm_t, 0.001)
                 
-            generation.selection("RWS").uniform_crossover(self.Pc).mutation(self.Pm)
+            generation.selection("RWS").uniform_crossover(self.Pc).mutation(Pm_t)
 
         self.log = {"avg": fitavg, "max": fitmax, "pop": generation.pop}
         return generation.pop
@@ -258,8 +272,13 @@ class KnapsackProblem:
             # 10 세대마다 fitness 출력
             if gen % 10 == 0:
                 print(f"TMS Generation {gen:3d}: Max Fitness = {current_max:.6f}")
-                
-            generation.selection("TMS").uniform_crossover(self.Pc).mutation(self.Pm)
+
+            # 기존: 고정된 Pm을 사용
+            # 변경: 세대가 진행될수록 돌연변이 확률을 감소시키는 방식 도입
+            Pm_t = self.Pm * (1 - gen / self.max_generations)
+            Pm_t = max(Pm_t, 0.001)
+
+            generation.selection("TMS").uniform_crossover(self.Pc).mutation(Pm_t)
 
         self.log = {"avg": fitavg, "max": fitmax, "pop": generation.pop}
         return generation.pop
